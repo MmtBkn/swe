@@ -1,0 +1,17 @@
+{
+  "name": "swe",
+  "private": true,
+  "scripts": {
+    "dist": "node scripts/build-skill.mjs",
+    "dist:prd": "node scripts/build-skill.mjs prd",
+    "dist:swe-init": "node scripts/build-skill.mjs swe-init",
+    "dist:swe-exec": "node scripts/build-skill.mjs swe-exec",
+    "dist:swe-tdd": "node scripts/build-skill.mjs swe-tdd",
+    "install:local": "node scripts/install-local.mjs",
+    "install:local:prd": "node scripts/install-local.mjs prd",
+    "install:local:swe-init": "node scripts/install-local.mjs swe-init",
+    "install:local:swe-exec": "node scripts/install-local.mjs swe-exec",
+    "install:local:swe-tdd": "node scripts/install-local.mjs swe-tdd",
+    "install": "npm run dist && npm run install:local"
+  }
+}
