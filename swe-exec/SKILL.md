@@ -58,10 +58,12 @@ Turn `.swe` planning artifacts into working code by:
 
 4. Implement stories sequentially
    - List story files under `.swe/stories/<feature-slug>/` and sort by numeric prefix (`001`, `002`, …).
+   - Create a checklist plan with each story name, and create a plan to implement it
    - Start at `001-...`. Act like a FAANG Principal Engineer implement one story at a time until all stories are done.
    - Skip any story already suffixed `-done`.
    - For each story:
      - Re-read the story and capture acceptance criteria in `.next.md`.
+     - Act like a FAANG Principal Engineer, and update plan to include sub plan for this story. (# Plan Story 001XXX Subtask 001-001XXX)
      - Act like a FAANG Principal Engineer, and implement the code changes needed to satisfy the story.
      - Run the smallest validating command(s) available (tests/build/lint or other commands like kubectl deploy or `npx nx serve segments --configuration=online`) and fix failures caused by your changes.
      - When the validation is complete, Rename the story file to include `-done` in the filename.
@@ -69,14 +71,17 @@ Turn `.swe` planning artifacts into working code by:
    - Continue non stop until all of the stories are implemented
 
 5. Finalize after all stories are implemented
-   - Run stack locally, use your browser skills and verify all of the changes.
+   - Run full stack locally via docker-compose, use your browser skills and verify all of the changes.
    - Make sure PRD, and Spec is fully implemented. 
    - Only after verification:
      - Rename the tech spec to add `-done`.
      - Rename the proposal/PRD to add `-done`.
    - Record the verification and final status in `.next.md`.
 
-6. When you are done, test all of the implementation against to the .swe/specs/TST-00X-<feature-slug>.md
+6. Check if there are stories left unimplemented for given folder
+   - Create a plan to implement them all (you don't have time/resource constraints, this is non negotiable)
+
+7. When you are done, test all of the implementation against to the .swe/specs/TST-00X-<feature-slug>.md
    - Write and run playwright/selennium or other e2e tests to test end to end user flows and business value in real user environment 
    - Identify gaps
    - Close gaps
@@ -87,3 +92,12 @@ Turn `.swe` planning artifacts into working code by:
 - Prefer small, reviewable diffs per story; keep changes scoped to the current story.
 - Use repository-native scripts/commands for build/test/lint when available.
 - For renames in a git repo, prefer `git mv` (or an equivalent safe rename) so history is preserved.
+- When you are done with a teask, for example 001, check the next one in the sequence, 002, and there is next task in the sequence, continue with the execution of the next story
+
+Red Flags
+- There are stories left under the folder unimplemented
+- There are gaps in the implementation
+- You broke different features
+- Not good user experience
+- You haven't tested Ui related changes your headless browser skill (where skill exists)
+- Error messages caused by poor UX implementation
