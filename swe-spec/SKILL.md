@@ -96,7 +96,7 @@ Where:
       •	List the most likely modules/files/packages impacted by the feature.
       •	List sensitive areas (security, auth, billing, compliance) and constraints from prior proposals/context.
     •	Produce a “Tech Spec Integration Map” artifact
-      •	Create a short artifact under: .swe-cache/tech-analysis/ANALYSIS-00X-<Short-Slug>.md containing:
+      •	Create a short artifact under: .swe/.cache/tech-analysis/ANALYSIS-00X-<Short-Slug>.md containing:
       •	Architecture snapshot (components + responsibilities)
       •	Integration inventory (APIs, events, jobs, external deps)
       •	Dependency graph (at least high-level)
@@ -120,7 +120,7 @@ Where:
       •	plus: src/, apps/, services/, packages/, libs/, cmd/, internal/, api/, migrations/ (if they exist)
 
 ### 5) Write the technical specification (principal architect mode)
-- Read `.swe-cache/tech-analysis/ANALYSIS-00X-<Short-Slug>.md`, all of it.
+- Read `.swe/.cache/tech-analysis/ANALYSIS-00X-<Short-Slug>.md`, all of it.
 - Create `.swe/specs/` if needed.
 - Create/update `.swe/specs/TSD-00X-<feature-slug>.md` using the template.
 - Requirements traceability:
@@ -165,24 +165,27 @@ Where:
 ### 8) Create stories from the spec, and epics
 
 - Create `.swe/stories/<feature-slug>/` if needed.
-- Derive a set of stories (usually 1–20 depending on the size, and edge cases) that cover end-to-end delivery.
-- For each story:
+- For each epic:
   - Choose the next incremental `STORY-00X` by scanning existing epic files in the folder.
-  - Create `STORY-00X-<epic-slug>.md`
-  - Act like a principal TPM, and break down the PRD/Epic section to story using storywriting best practices
-- Continue until all of the epics are broken down
+  - Create `STORY-00X-<epic-slug>-<story-slug>.md`
+  - Derive a set of stories (usually 1–20 PER EPIC (ensure good coverage) depending on the size, and edge cases) that cover end-to-end delivery.
+    - Act like a principal TPM, and break down the PRD/Epic section to story using storywriting best practices
+    - Make sure there are boilerplate tasks that sets up the stage for rest of the stories, multiple implementation tickets (per feature area, seperated by component(seperate stories for frontend, backend, business logic, data model, database, ai models, external API configuration etc.)
+    - Documentation tasks are added under .swe/docs (seperate stories .swe/docs/support for customer support team, .swe/docs/gtm for go to market team, .swe/docs/ops for Ops team (manual configs etc.), .swe/docs/devops for devops team (flags etc, where applicable),  and other options where applicable)
+    - Security review for each epic
+- Continue until all the epics are broken down (If there are 10 epics, there would be 6-120 stories depending on epic's complexity)
 
 ### 9) Story quality pass
 - Compact your context
-- Read everything under `.swe/context`, `.swe/epics/<feature-slug>/` It's long, but It's important to build the context. 
+- Read everything under `.swe/context`, `.swe/epics/<feature-slug>/`, and all the files under `STORY-00X-<epic-slug>` It's long, but It's important to build the context. 
 - Start from the first story, and do this for each story; Review the story against the PRD/Epic, and fix gaps by updating the story, or creating a new story.
-- Do final pass, and make sure stories are coverting everything under the PRD, Tech Spec, and the Epic that is part of
+- Do final pass, and make sure stories are covering everything under the PRD, Tech Spec, and the Epic that is part of
 - Ensure outputs are created exactly under `.swe/stories/<feature-slug>/`
 
 ### 10) Implementation quality pass
-- Read everything under `.swe/context`, `.swe/epics/<feature-slug>/`, `.swe/stories/<feature-slug>/`, `.swe/specs/TSD-00X-<feature-slug>.md`, `.swe-cache/tech-analysis/ANALYSIS-00X-<Short-Slug>.md` It's long, but It's important to build the context.
-- Identify integration risks, potetial things that we broke during the integration, and fix them
-- If UI is involved Do final pass testing using your browser mcp skills like Chrome MCP to bring the app up, take screenshots, and test it, and make sure stories are coverting everything under the PRD, Tech Spec, and the Epic that is part of, and none of the existing features are broken by this change
+- Read everything under `.swe/context`, `.swe/epics/<feature-slug>/`, `.swe/stories/<feature-slug>/`, `.swe/specs/TSD-00X-<feature-slug>.md`, `.swe/.cache/tech-analysis/ANALYSIS-00X-<Short-Slug>.md` It's long, but It's important to build the context.
+- Identify integration risks, potential things that we would broke during the integration (product, build, infra, anything), and create extra stories to mitigate them
+- If UI is involved instruct stories to do final pass testing using AIs browser mcp skills like Chrome MCP to bring the full app up, take screenshots, and test it, and make sure stories are covering the PRD requirements, Tech Spec, and the Epic that is part of, and none of the existing features are broken by this change
 
 Notes:
-This is a full feature execution. It's a big task, and It will take time. You have the time, and resources. You are smart, use your best jugment to unblock yourself when you feel like there is a blocker. Continue non stop until all of the stories are executed.
+This is a full feature planing. It's a big task, and It will take time. You have the time, and resources. You have to be patient, and complete the task without cutting corners. You are smart, use your best jugment to unblock yourself when you feel like there is a blocker. Continue non stop until all the stories are created.
