@@ -101,6 +101,7 @@ cp -R /path/to/this-repo/.cursor/agents/*.md ~/.cursor/agents/
 
 - Cursor also loads skills from `~/.codex/skills/` for compatibility. If you already installed the `swe-*` skills via Codex, you may only need to install the `.cursor/skills/swe-orchestrator/` skill and `.cursor/agents/` subagents.
 - The provided subagent files pin models like `gpt-5.2-high`, `gpt-5.2-xhigh`, and `gpt-5.3-codex-xhigh`. If those model IDs don’t exist in your Cursor plan/config, set `model: inherit` in the corresponding `.cursor/agents/*.md` files.
+- Orchestration behavior is centralized in `.cursor/skills/swe-orchestrator/references/RUNBOOK.md` (subagents and the skill reference it instead of duplicating instructions).
 
 ## Developing locally
 
