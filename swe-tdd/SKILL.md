@@ -14,6 +14,7 @@ Turn a PRD into a high-quality **Test Specification Document** that can drive im
 - Derived **user stories** (PRD → stories) for later verification
 - Feature-area test breakdown (epic-aligned when available)
 - Explicit UX-first edge cases (happy paths, error paths, empty/null states + CTAs, crash/recovery)
+- Users, and data required to test, craeted on the fly, no relyance on existing data, so we can have high parallelization with no data conflicts 
 - Requirements traceability (PRD → stories → **E2E tests**), with assumptions clearly labeled
 - A PRD-coverage iteration loop to surface ambiguities early (without writing the spec)
 
@@ -54,8 +55,8 @@ If the repo already stores test specs elsewhere, keep the *content* and structur
 - Prefer to load in this order:
   1) Matching proposal in `.swe/proposals/`
   2) Latest technical spec `.swe/specs/TSD-00X-<feature-slug>.md` (highest `00X`)
-  3) All epics under `.swe/epics/<feature-slug>/`
-  4) (Optional) Stories under `.swe/stories/<feature-slug>/`
+  3) Related epics under `.swe/epics/<feature-slug>/`
+  4) (Optional) Related Stories under `.swe/stories/<feature-slug>/`
 - Use these artifacts to refine test scope and coverage, but do not contradict the PRD. If there’s a mismatch, call it out explicitly.
 - It’s normal for these to be missing when running in parallel with `swe-spec`; proceed with PRD-only.
 
@@ -116,6 +117,7 @@ If the repo already stores test specs elsewhere, keep the *content* and structur
   - **Negative** scenarios (validation, errors, permissions)
   - **Edge cases** (explicit, enumerated; include empty states, null/undefined values, and crash/recovery)
   - **Observability checks** (logs/metrics/audits where relevant)
+  - **Data Prep** prepare ephemeral user/data for non conflicting highly parellelized testing 
   - **Automation guidance** (Playwright preferred; otherwise Selenium/Cypress per repo)
 - Prefer a consistent test case format with stable IDs (e.g., `TS-AREA1-001`) and **explicit user steps + expected user-visible outcomes**.
 
@@ -152,3 +154,5 @@ If the repo already stores test specs elsewhere, keep the *content* and structur
   - Edge cases present (cross-cutting + per area)
   - Clear priorities (P0/P1/P2) and E2E executability
   - No hidden uncertainty: assumptions and open questions are explicit
+  - Do not rely on existing data
+  - Instructions to clean up after every test

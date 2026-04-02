@@ -68,7 +68,7 @@ Treat these as “LLM context briefs”: concise, factual, source-backed, and ea
 8. Using the company, and product, build user personas
    - Build .swe/context/user-personas.md
      - Use your tools to search internal knowledge if there is already user personas defined, if so use them
-     - If personas aren't defined or if you can't find them, act liek a principal product manager, build user persoans for each target group at your best, so the coding agent can use them as a reference.
+     - If personas aren't defined or if you can't find them, act like a principal product manager, build user persons for each target group at your best, so the coding agent can use them as a reference.
 
 9. If user doesn't have a company and/or product yet, ask questions to user to build these. Help user, make assumptions using your best. 
 

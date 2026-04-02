@@ -47,7 +47,7 @@ Add dockerize, publish, and release targets explicitly to project configurations
 
 Layer	Recommended Technology
 Frontend	React SPA (use react-admin template if suitable)
-Backend	Node.js (Express/NestJS)
+Backend	Node.js (Express/NestJS) (Hasura where it makes more sense)
 Database	PostgreSQL
 Queue System	NSQ
 Authentication	Keycloak (when required)
@@ -68,7 +68,9 @@ Helm Chart Structure:
         •   ELK Stack
         •   Vault (official HashiCorp chart)
         •   Dependencies Chart
-    •	Service Chart: Manages reponative charts
+    •	Service Chart: Manages repo native charts
+
+Use official charts from official helm repos, do not pull & re push chars 
 
 Example Chart.yaml structure:
 

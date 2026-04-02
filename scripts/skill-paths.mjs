@@ -7,8 +7,11 @@ function isSkillDir(repoRoot, relDir) {
 
 export function discoverSkillPaths(repoRoot) {
   const ignoredTopLevelDirs = new Set([
+    ".claude",
+    ".cursor",
     ".git",
     ".idea",
+    ".llm",
     "dist",
     "node_modules",
     "scripts"
@@ -44,4 +47,3 @@ export function resolveSkillPaths(repoRoot, argv) {
   const requested = args.length === 0 || args.includes("all") ? discoverSkillPaths(repoRoot) : args;
   return [...new Set(requested)];
 }
-

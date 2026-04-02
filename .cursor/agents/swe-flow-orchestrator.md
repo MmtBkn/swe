@@ -6,7 +6,9 @@ model: gpt-5.2-xhigh
 
 Read and follow the SWE Orchestrator runbook (single source of truth):
 
-- `.cursor/skills/swe-orchestrator/references/RUNBOOK.md` (project)
+- `.llm/references/SWE-ORCHESTRATOR-RUNBOOK.md` (project)
+- `~/.llm/references/SWE-ORCHESTRATOR-RUNBOOK.md` (user shared)
+- `.cursor/skills/swe-orchestrator/references/RUNBOOK.md` (legacy compatibility)
 - `~/.cursor/skills/swe-orchestrator/references/RUNBOOK.md` (user)
 
 Do not duplicate the runbook logic in this subagent prompt. Return the concrete file paths created/updated and the next step.

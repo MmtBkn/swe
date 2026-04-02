@@ -21,6 +21,8 @@ Learn more:
 
 These skills work best together:
 
+- `bug-fix` — Diagnose and fix a bounded bug, regression, failing test, or broken flow.
+- `swe-ux-ui` — Create or evolve Stitch-based UX/UI designs with repo-aware project resolution and persona-review validation.
 - `swe-init` — Build durable company/product context in `.swe/context/**`.
 - `swe-prd` — Create a PRD/proposal in `.swe/proposals/` (repo-informed, structured).
 - `swe-spec` — Turn a PRD into a detailed tech spec + epics + stories.
@@ -28,6 +30,8 @@ These skills work best together:
 - `swe-exec` — Execute stories sequentially, keep an execution log, and ship working code.
 
 ## Recommended workflow
+
+If the ask is a bug or regression, start with `bug-fix`.
 
 1. Start with context: `swe-init`
 2. Define the feature: `swe-prd`
@@ -71,6 +75,7 @@ Cursor supports Agent Skills and Subagents (see Cursor changelog 2.4). This repo
 
 - Skill: `.cursor/skills/swe-orchestrator/`
 - Subagents: `.cursor/agents/`
+- Shared runbooks: `.llm/references/`
 
 ### Install (project-level)
 
@@ -78,9 +83,10 @@ Copy the skills and subagents into your project:
 
 ```bash
 mkdir -p .cursor/skills .cursor/agents
-cp -R /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec .cursor/skills/
+cp -R /path/to/this-repo/bug-fix /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec .cursor/skills/
 cp -R /path/to/this-repo/.cursor/skills/swe-orchestrator .cursor/skills/
 cp -R /path/to/this-repo/.cursor/agents/*.md .cursor/agents/
+cp -R /path/to/this-repo/.llm .
 ```
 
 Restart Cursor, then invoke the workflow from Agent chat:
@@ -92,16 +98,55 @@ Restart Cursor, then invoke the workflow from Agent chat:
 
 ```bash
 mkdir -p ~/.cursor/skills ~/.cursor/agents
-cp -R /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec ~/.cursor/skills/
+cp -R /path/to/this-repo/bug-fix /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec ~/.cursor/skills/
 cp -R /path/to/this-repo/.cursor/skills/swe-orchestrator ~/.cursor/skills/
 cp -R /path/to/this-repo/.cursor/agents/*.md ~/.cursor/agents/
+cp -R /path/to/this-repo/.llm ~/
 ```
 
 ### Notes
 
 - Cursor also loads skills from `~/.codex/skills/` for compatibility. If you already installed the `swe-*` skills via Codex, you may only need to install the `.cursor/skills/swe-orchestrator/` skill and `.cursor/agents/` subagents.
 - The provided subagent files pin models like `gpt-5.2-high`, `gpt-5.2-xhigh`, and `gpt-5.3-codex-xhigh`. If those model IDs don’t exist in your Cursor plan/config, set `model: inherit` in the corresponding `.cursor/agents/*.md` files.
-- Orchestration behavior is centralized in `.cursor/skills/swe-orchestrator/references/RUNBOOK.md` (subagents and the skill reference it instead of duplicating instructions).
+- Orchestration behavior is centralized in `.llm/references/SWE-ORCHESTRATOR-RUNBOOK.md` and provider wrappers reference it instead of duplicating instructions.
+
+## Using in Claude Code
+
+Claude Code supports both project skills and project subagents. This repo includes:
+
+- Claude command proxies: `.claude/commands/`
+- Claude subagents: `.claude/agents/`
+- Shared runbooks and proxy rules: `.llm/references/`
+
+### Install (project-level)
+
+```bash
+mkdir -p .claude/skills .claude/commands .claude/agents
+cp -R /path/to/this-repo/bug-fix /path/to/this-repo/create-plan /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec .claude/skills/
+cp -R /path/to/this-repo/.system/skill-creator /path/to/this-repo/.system/skill-installer .claude/skills/
+cp -R /path/to/this-repo/.claude/commands .claude/
+cp -R /path/to/this-repo/.claude/agents .claude/
+cp -R /path/to/this-repo/.llm .
+```
+
+Restart Claude Code or reload agents after copying the files.
+
+### Install (user-level / global)
+
+```bash
+mkdir -p ~/.claude/skills ~/.claude/commands ~/.claude/agents
+cp -R /path/to/this-repo/bug-fix /path/to/this-repo/create-plan /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec ~/.claude/skills/
+cp -R /path/to/this-repo/.system/skill-creator /path/to/this-repo/.system/skill-installer ~/.claude/skills/
+cp -R /path/to/this-repo/.claude/commands ~/.claude/
+cp -R /path/to/this-repo/.claude/agents ~/.claude/
+cp -R /path/to/this-repo/.llm ~/
+```
+
+### Notes
+
+- Claude project skills in `.claude/skills/` are the canonical instructions. The files in `.claude/commands/` are thin provider proxies so you do not have to duplicate prompts.
+- The shared runbooks in `.llm/references/` are the single source of truth for orchestration and proxy behavior across Cursor and Claude.
+- The Claude orchestrator entrypoint is `/swe-orchestrator`. The other commands proxy directly to the canonical skill files when those skills are not already being invoked directly.
 
 ## Developing locally
 
