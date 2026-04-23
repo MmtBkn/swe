@@ -1,0 +1,3 @@
+timecode,end_time,scene,track,type,cue_name,purpose,asset_path,volume_db,status,notes
+00:00:00.000,00:00:05.000,Hook,A2,music,pressure_bed,Create tension before proof,05_audio/generated/main_music.wav,-18,pending,TBD
+00:00:03.200,00:00:03.600,Hook,A3,sfx,soft_reveal_hit,Land a product reveal,05_audio/generated/sfx/soft_reveal_hit.wav,-10,pending,Keep subtle

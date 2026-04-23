@@ -1,0 +1,6 @@
+shot_id,scene,start_time,end_time,shot_type,description,framing,camera_motion,ui_action,source_asset,tool,aspect_ratio,resolution,fps,status,notes
+S001,Hook,00:00,00:05,generated/capture/composite,,,,,,,,16:9,1920x1080,30,Draft,
+S002,Tension,00:05,00:15,generated/capture/composite,,,,,,,,16:9,1920x1080,30,Draft,
+S003,Breakthrough,00:15,00:30,generated/capture/composite,,,,,,,,16:9,1920x1080,30,Draft,
+S004,Proof,00:30,00:45,capture,,,,,,,,16:9,1920x1080,30,Draft,
+S005,CTA,00:45,01:00,composite,,,,,,,,16:9,1920x1080,30,Draft,

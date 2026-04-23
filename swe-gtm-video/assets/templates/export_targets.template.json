@@ -1,0 +1,42 @@
+{
+  "project": "{{PROJECT_NAME}}",
+  "version": "2.0",
+  "targets": [
+    {
+      "id": "primary_full_length",
+      "name": "Primary Full-Length Master",
+      "path": "09_exports/masters/{{PROJECT_SLUG}}_master.mp4",
+      "format": "H.264 MP4",
+      "resolution": "1920x1080",
+      "fps": 30,
+      "audio": {
+        "sample_rate_hz": 48000,
+        "integrated_lufs": -14,
+        "true_peak_db_tp": -1.0
+      },
+      "captions": "sidecar_or_embedded_if_supported",
+      "status": "pending"
+    },
+    {
+      "id": "silent_captioned",
+      "name": "Silent Captioned Autoplay Version",
+      "path": "09_exports/social/{{PROJECT_SLUG}}_silent_captioned.mp4",
+      "format": "H.264 MP4",
+      "resolution": "1920x1080",
+      "fps": 30,
+      "audio": "muted_or_music_only_by_platform_need",
+      "captions": "burned_in",
+      "status": "pending"
+    },
+    {
+      "id": "social_cutdown",
+      "name": "15–30s Social Cutdown",
+      "path": "09_exports/cutdowns/{{PROJECT_SLUG}}_cutdown.mp4",
+      "format": "H.264 MP4",
+      "resolution": "1920x1080",
+      "fps": 30,
+      "captions": "burned_in_or_sidecar",
+      "status": "pending"
+    }
+  ]
+}

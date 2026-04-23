@@ -1,0 +1,66 @@
+{
+  "project": "{{PROJECT_NAME}}",
+  "version": "2.0",
+  "generated_at": "{{date}}",
+  "mcp_server": "premiere_pro",
+  "instructions_resource": "premiere://config/get_instructions",
+  "strategy": "Use MCP introspection first. Prefer high-level assembly tools with clipPlan when expressive enough; otherwise use atomic Premiere operations.",
+  "operations": [
+    {
+      "id": "OP001_READ_INSTRUCTIONS",
+      "phase": "readiness",
+      "intent": "Load Premiere-specific operating guidance before editing.",
+      "preferred_tool": "resource:premiere://config/get_instructions",
+      "fallback": "Use MCP tool introspection and repo guide.",
+      "status": "pending"
+    },
+    {
+      "id": "OP002_CREATE_SEQUENCE",
+      "phase": "setup",
+      "intent": "Create or select the master sequence.",
+      "preferred_tool": "introspect_then_create_sequence_or_select_sequence",
+      "inputs_from_manifest": ["spec.sequence_name", "spec.width", "spec.height", "spec.fps", "spec.audio_sample_rate_hz"],
+      "status": "pending"
+    },
+    {
+      "id": "OP003_IMPORT_ASSETS",
+      "phase": "ingest",
+      "intent": "Import all approved media and organize bins.",
+      "preferred_tool": "introspect_then_import_media_and_create_bins",
+      "inputs_from_manifest": ["bins", "timeline_items[].path"],
+      "status": "pending"
+    },
+    {
+      "id": "OP004_ASSEMBLE_TIMELINE",
+      "phase": "timeline",
+      "intent": "Place, trim, and layer clips according to timeline_manifest.json.",
+      "preferred_tool": "assemble_product_spot_or_atomic_clip_placement",
+      "inputs_from_manifest": ["timeline_items"],
+      "status": "pending"
+    },
+    {
+      "id": "OP005_APPLY_MOTION_TRANSITIONS_EFFECTS",
+      "phase": "polish",
+      "intent": "Apply transitions, keyframes, effects, overlays, captions, and brand locks.",
+      "preferred_tool": "introspect_then_apply_transition_effect_keyframe_caption_tools",
+      "inputs_from_manifest": ["transitions", "effects", "timeline_items[].motion", "captions"],
+      "status": "pending"
+    },
+    {
+      "id": "OP006_AUDIO_MASTERING",
+      "phase": "audio",
+      "intent": "Mix VO, music, SFX, ducking, limiting, and loudness target where available.",
+      "preferred_tool": "introspect_then_audio_mix_or_effect_tools",
+      "inputs_from_manifest": ["audio_mastering", "timeline_items[type=audio]"],
+      "status": "pending"
+    },
+    {
+      "id": "OP007_EXPORTS",
+      "phase": "export",
+      "intent": "Export final master and variants.",
+      "preferred_tool": "introspect_then_export_sequence_or_media_encoder",
+      "inputs_from_manifest": ["spec.export_targets", "08_edit/export_targets.json"],
+      "status": "pending"
+    }
+  ]
+}

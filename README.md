@@ -28,6 +28,7 @@ These skills work best together:
 - `swe-spec` — Turn a PRD into a detailed tech spec + epics + stories.
 - `swe-tdd` — Derive an E2E-first test specification from the PRD (traceable coverage).
 - `swe-exec` — Execute stories sequentially, keep an execution log, and ship working code.
+- `swe-gtm-video` — Create a GTM video package from product, launch, and SWE artifacts.
 
 ## Recommended workflow
 
@@ -38,6 +39,7 @@ If the ask is a bug or regression, start with `bug-fix`.
 3. Design it properly: `swe-spec`
 4. Lock in validation: `swe-tdd`
 5. Build it end-to-end: `swe-exec`
+6. Prepare launch assets when needed: `swe-gtm-video`
 
 ## Why this works
 
@@ -68,6 +70,7 @@ In Codex, invoke a skill by name in your prompt (often with a `$` prefix), for e
 
 - “Use `$swe-spec` to turn `.swe/proposals/PROPOSAL-001-payments.md` into a tech spec and epics.”
 - “Use `$swe-exec` to implement the stories in `.swe/stories/payments/`.”
+- “Use `$swe-gtm-video` to create a launch video package from `.swe/specs/TSD-001-payments.md`.”
 
 ## Using in Cursor (2.4+)
 
@@ -83,7 +86,7 @@ Copy the skills and subagents into your project:
 
 ```bash
 mkdir -p .cursor/skills .cursor/agents
-cp -R /path/to/this-repo/bug-fix /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec .cursor/skills/
+cp -R /path/to/this-repo/bug-fix /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video .cursor/skills/
 cp -R /path/to/this-repo/.cursor/skills/swe-orchestrator .cursor/skills/
 cp -R /path/to/this-repo/.cursor/agents/*.md .cursor/agents/
 cp -R /path/to/this-repo/.llm .
@@ -98,7 +101,7 @@ Restart Cursor, then invoke the workflow from Agent chat:
 
 ```bash
 mkdir -p ~/.cursor/skills ~/.cursor/agents
-cp -R /path/to/this-repo/bug-fix /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec ~/.cursor/skills/
+cp -R /path/to/this-repo/bug-fix /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video ~/.cursor/skills/
 cp -R /path/to/this-repo/.cursor/skills/swe-orchestrator ~/.cursor/skills/
 cp -R /path/to/this-repo/.cursor/agents/*.md ~/.cursor/agents/
 cp -R /path/to/this-repo/.llm ~/
@@ -122,7 +125,7 @@ Claude Code supports both project skills and project subagents. This repo includ
 
 ```bash
 mkdir -p .claude/skills .claude/commands .claude/agents
-cp -R /path/to/this-repo/bug-fix /path/to/this-repo/create-plan /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec .claude/skills/
+cp -R /path/to/this-repo/bug-fix /path/to/this-repo/create-plan /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video .claude/skills/
 cp -R /path/to/this-repo/.system/skill-creator /path/to/this-repo/.system/skill-installer .claude/skills/
 cp -R /path/to/this-repo/.claude/commands .claude/
 cp -R /path/to/this-repo/.claude/agents .claude/
@@ -135,7 +138,7 @@ Restart Claude Code or reload agents after copying the files.
 
 ```bash
 mkdir -p ~/.claude/skills ~/.claude/commands ~/.claude/agents
-cp -R /path/to/this-repo/bug-fix /path/to/this-repo/create-plan /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec ~/.claude/skills/
+cp -R /path/to/this-repo/bug-fix /path/to/this-repo/create-plan /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video ~/.claude/skills/
 cp -R /path/to/this-repo/.system/skill-creator /path/to/this-repo/.system/skill-installer ~/.claude/skills/
 cp -R /path/to/this-repo/.claude/commands ~/.claude/
 cp -R /path/to/this-repo/.claude/agents ~/.claude/

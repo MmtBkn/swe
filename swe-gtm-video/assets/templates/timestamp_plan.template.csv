@@ -1,0 +1,2 @@
+start_time,end_time,scene,intent,visual,action,voiceover,on_screen_copy,music,sfx,source_asset,method,track,transition,motion_notes,owner,status,risk
+00:00:00.000,00:00:05.000,Hook,Make the viewer feel the pain immediately,Real UI or cinematic pressure plate,Show friction before product relief,TBD,TBD,Pressure bed begins,Subtle UI tick,TBD,capture_or_generated,V1,cross_dissolve,Slow push-in,Creative Director,draft,TBD

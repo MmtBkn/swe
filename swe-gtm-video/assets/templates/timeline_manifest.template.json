@@ -1,0 +1,176 @@
+{
+  "project": "{{PROJECT_NAME}}",
+  "version": "2.0",
+  "created_at": "{{date}}",
+  "spec": {
+    "duration_seconds": 60,
+    "aspect_ratio": "16:9",
+    "resolution": "1920x1080",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "audio_sample_rate_hz": 48000,
+    "sequence_name": "{{PROJECT_SLUG}}_master",
+    "premiere_project_path": "09_exports/premiere-project/{{PROJECT_SLUG}}.prproj",
+    "safe_areas": {
+      "title_safe_percent": 90,
+      "action_safe_percent": 95
+    },
+    "export_targets": ["primary_full_length", "silent_captioned", "social_cutdown"]
+  },
+  "premiere": {
+    "mcp_server_name": "premiere_pro",
+    "read_instructions_resource": "premiere://config/get_instructions",
+    "use_tool_introspection": true,
+    "preferred_workflows": [
+      "build_brand_spot_from_mogrt_and_assets",
+      "assemble_product_spot",
+      "atomic_timeline_operations"
+    ],
+    "bridge_temp_directory": "/tmp/premiere-mcp-bridge",
+    "requires_human_review_before_export": true
+  },
+  "bins": [
+    {"name": "01_Captures", "description": "Real product proof footage and screenshots"},
+    {"name": "02_Generated", "description": "Approved generated plates and transitional assets"},
+    {"name": "03_Audio_VO", "description": "Voiceover"},
+    {"name": "04_Audio_Music", "description": "Music beds and stems"},
+    {"name": "05_Audio_SFX", "description": "Sound effects and UI sounds"},
+    {"name": "06_Graphics", "description": "Overlays, titles, lower thirds"},
+    {"name": "07_Brand_Locked", "description": "Approved logos, intro/outro, brand marks"},
+    {"name": "08_MOGRT", "description": "Approved motion graphics templates"},
+    {"name": "09_Exports", "description": "Rendered masters and cutdowns"}
+  ],
+  "tracks": {
+    "video": [
+      {"id": "V1", "name": "Primary software capture / product proof", "locked": false},
+      {"id": "V2", "name": "Detail captures / picture-in-picture / B-roll", "locked": false},
+      {"id": "V3", "name": "Generated plates / transitions / cinematic context", "locked": false},
+      {"id": "V4", "name": "UI focus masks / magnification / cursor treatment", "locked": false},
+      {"id": "V5", "name": "Text overlays / callouts / lower thirds", "locked": false},
+      {"id": "V6", "name": "Locked brand marks / logo / intro-outro overlays", "locked": true},
+      {"id": "V7", "name": "Captions / subtitles / legal", "locked": false}
+    ],
+    "audio": [
+      {"id": "A1", "name": "Voiceover", "role": "dialogue", "target_level": "primary"},
+      {"id": "A2", "name": "Music", "role": "music", "duck_under": "A1"},
+      {"id": "A3", "name": "SFX / UI sounds", "role": "effects"},
+      {"id": "A4", "name": "Ambience / risers / room tone", "role": "ambience"},
+      {"id": "A5", "name": "Reference audio muted", "role": "reference", "muted": true}
+    ]
+  },
+  "timeline_items": [
+    {
+      "id": "SC001_V1_PRODUCT_PROOF",
+      "scene_id": "SC001",
+      "type": "video",
+      "role": "primary_capture",
+      "track": "V1",
+      "asset_id": "CAPTURE_001",
+      "path": "06_capture/captures/example_capture.mp4",
+      "start": "00:00:00.000",
+      "end": "00:00:05.000",
+      "source_in": "00:00:00.000",
+      "source_out": "00:00:05.000",
+      "fit": "contain",
+      "opacity": 100,
+      "motion": {
+        "scale": [{"time": "00:00:00.000", "value": 100}],
+        "position": [{"time": "00:00:00.000", "value": [960, 540]}],
+        "easing": "easeOutCubic"
+      },
+      "transition_in": null,
+      "transition_out": {"type": "cross_dissolve", "duration": "00:00:00.333", "emotional_intent": "softly connect pain to proof"},
+      "notes": "Replace with actual capture."
+    },
+    {
+      "id": "SC001_A1_VO",
+      "scene_id": "SC001",
+      "type": "audio",
+      "role": "voiceover",
+      "track": "A1",
+      "asset_id": "VO_001",
+      "path": "05_audio/generated/main_voiceover.wav",
+      "start": "00:00:00.200",
+      "end": "00:00:04.700",
+      "volume_db": 0,
+      "notes": "VO is the anchor; mix around it."
+    },
+    {
+      "id": "SC001_V5_OVERLAY",
+      "scene_id": "SC001",
+      "type": "text_overlay",
+      "role": "title",
+      "track": "V5",
+      "start": "00:00:00.600",
+      "end": "00:00:03.500",
+      "text": "Your backlog is moving. Your product should be too.",
+      "style_ref": "04_design/overlay_spec.md#hero-title",
+      "motion": {
+        "opacity": [{"time": "00:00:00.600", "value": 0}, {"time": "00:00:01.000", "value": 100}, {"time": "00:00:03.300", "value": 100}, {"time": "00:00:03.500", "value": 0}],
+        "position": [{"time": "00:00:00.600", "value": [190, 820]}, {"time": "00:00:01.000", "value": [190, 790]}]
+      },
+      "safe_area": "title_safe",
+      "notes": "Use approved type style; do not overcrowd UI."
+    }
+  ],
+  "transitions": [
+    {
+      "id": "TR001",
+      "target_item_id": "SC001_V1_PRODUCT_PROOF",
+      "type": "cross_dissolve",
+      "placement": "out",
+      "duration": "00:00:00.333",
+      "easing": "easeInOut",
+      "emotional_intent": "move from pressure to product proof without a hard sales cut"
+    }
+  ],
+  "effects": [
+    {
+      "id": "FX001",
+      "target_item_id": "SC001_V1_PRODUCT_PROOF",
+      "type": "lumetri_basic_correction",
+      "settings": {
+        "exposure": 0,
+        "contrast": 0,
+        "saturation": 100
+      },
+      "notes": "Keep UI truthful and readable."
+    }
+  ],
+  "captions": {
+    "path": "08_edit/captions.srt",
+    "track": "V7",
+    "burn_in": false,
+    "style_ref": "04_design/overlay_spec.md#captions",
+    "required_for_silent_export": true
+  },
+  "audio_mastering": {
+    "plan_path": "05_audio/audio_mastering_plan.md",
+    "dialogue_track": "A1",
+    "music_track": "A2",
+    "sfx_track": "A3",
+    "ducking": {
+      "music_under_vo_db": -10,
+      "attack_ms": 150,
+      "release_ms": 350
+    },
+    "loudness_target": {
+      "integrated_lufs": -14,
+      "true_peak_db_tp": -1.0
+    },
+    "must_check": ["no_clipping", "vo_intelligible", "music_not_masking_vo", "sfx_not_distracting"]
+  },
+  "markers": [
+    {"time": "00:00:00.000", "name": "Hook begins", "color": "green", "notes": "Viewer should feel the pain immediately."}
+  ],
+  "quality_gates": [
+    "manifest_times_do_not_overlap_unintentionally",
+    "product_claims_match_feature_truth_map",
+    "all_brand_layers_use_source_assets_only",
+    "ui_text_readable_at_export_resolution",
+    "captions_present_for_silent_export",
+    "audio_mastering_target_checked",
+    "export_matches_platform_specs"
+  ]
+}

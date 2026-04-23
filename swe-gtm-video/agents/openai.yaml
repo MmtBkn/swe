@@ -1,0 +1,7 @@
+interface:
+  display_name: "SWE GTM Video"
+  short_description: "Turn software features into cinematic GTM videos with story, screen capture, motion, voiceover, music, Premiere MCP compositing, and final exports."
+  brand_color: "#111827"
+  default_prompt: "Use the swe-gtm-video skill to create a complete agent-driven GTM video production system for this software feature, including a multi-track Premiere MCP timeline and final export plan."
+policy:
+  allow_implicit_invocation: true

@@ -19,6 +19,7 @@ For every workflow step, the canonical how-to instructions live in the base skil
 - `swe-spec`
 - `swe-tdd`
 - `swe-exec`
+- `swe-gtm-video`
 
 Use `.llm/references/SKILL-PROXY-RULES.md` to resolve those skill files. Do not restate their workflows in provider wrappers.
 
@@ -137,3 +138,9 @@ Do not run PRD, spec, TDD, or exec flows for this path.
 - Resolve and read the canonical `swe-exec` skill.
 - Follow it exactly.
 - Return what changed, what was validated, and what is next.
+
+### `swe-gtm-video-runner`
+
+- Resolve and read the canonical `swe-gtm-video` skill.
+- Follow it exactly.
+- Return the GTM video package path, source artifacts used, assumptions, and open questions.

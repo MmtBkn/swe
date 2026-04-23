@@ -1,0 +1,4 @@
+asset_id,scene,path,type,source,bin,track,role,duration,approval_status,license_or_rights,brand_locked,integrity_check,notes
+CAPTURE_001,Hook,06_capture/captures/example_capture.mp4,video,browser_capture,01_Captures,V1,primary_capture,00:00:05.000,pending,internal_demo,false,ui_text_verified,TBD
+VO_001,Hook,05_audio/generated/main_voiceover.wav,audio,elevenlabs_or_approved_voice,03_Audio_VO,A1,voiceover,TBD,pending,TBD,false,audio_clean,TBD
+BRAND_001,CTA,00_inputs/brand-assets/logo.svg,graphic,approved_brand_asset,07_Brand_Locked,V6,logo_lockup,TBD,pending,approved_brand_asset,true,source_asset_only,TBD
