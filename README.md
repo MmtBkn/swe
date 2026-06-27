@@ -2,9 +2,9 @@
 
 **swe** is a collection of Agent Skills for Codex that helps you take a feature from idea to shipped code — without losing the thread. The focus is on **security**, **scalability**, and a **developer experience** that stays clean as the feature grows.
 
-These skills are built for real work that doesn’t fit in a single session. It’s normal to run them across multiple follow-ups and spend **1)+ hours** on a feature once you include integration hardening, edge cases, and polish.
+These skills are built for real work that doesn’t fit in a single session. It’s normal to run them across multiple follow-ups, but the workflow should keep each story small, locally validated, and committed before moving on.
 
-The philosophy is simple: ship the whole feature first, then iterate until it’s solid.
+The philosophy is simple: use one proposal branch, ship thin vertical stories as green commits, and open a PR only after local build/lint/E2E evidence shows the branch is ready.
 
 ## What are Agent Skills?
 
@@ -21,32 +21,44 @@ Learn more:
 
 These skills work best together:
 
-- `bug-fix` — Diagnose and fix a bounded bug, regression, failing test, or broken flow.
+- `swe-bug-fix` — Diagnose and fix a bounded bug, regression, failing test, or broken flow.
 - `swe-ux-ui` — Create or evolve Stitch-based UX/UI designs with repo-aware project resolution and persona-review validation.
 - `swe-init` — Build durable company/product context in `.swe/context/**`.
 - `swe-prd` — Create a PRD/proposal in `.swe/proposals/` (repo-informed, structured).
-- `swe-spec` — Turn a PRD into a detailed tech spec + epics + stories.
-- `swe-tdd` — Derive an E2E-first test specification from the PRD (traceable coverage).
+- `swe-spec` — Turn a PRD into a detailed tech spec, independent E2E test spec, fine-grained epics, and implementation stories.
+- `swe-tdd` — Derive an E2E-first test specification from the PRD (traceable coverage), either directly or as the independent validation pass inside `swe-spec`.
 - `swe-exec` — Execute stories sequentially, keep an execution log, and ship working code.
 - `swe-gtm-video` — Create a GTM video package from product, launch, and SWE artifacts.
 
 ## Recommended workflow
 
-If the ask is a bug or regression, start with `bug-fix`.
+If the ask is a bug or regression, start with `swe-bug-fix`.
 
 1. Start with context: `swe-init`
 2. Define the feature: `swe-prd`
-3. Design it properly: `swe-spec`
-4. Lock in validation: `swe-tdd`
+3. Design it properly and lock in validation: `swe-spec` (spawns/uses an independent `swe-tdd` pass)
+4. Optional standalone validation refresh: `swe-tdd`
 5. Build it end-to-end: `swe-exec`
 6. Prepare launch assets when needed: `swe-gtm-video`
 
+Execution expectations:
+- Create or use one branch per proposal/feature.
+- Implement one fine-grained vertical story at a time.
+- Run build, lint/typecheck, and story-mapped E2E before marking a story `-done`.
+- Commit each validated story to the proposal branch.
+- Reuse one owned running stack per worktree for E2E when possible; do not spin up a fresh environment per test worker.
+- Auto-wire dynamic ports behind the scenes, pass ownership metadata to E2E, and never kill a stack owned by a different worktree.
+- Keep generated code small and idiomatic: functions <=50 lines preferred, files <=400 lines preferred, complexity <=10, no unbounded API loops.
+- Ensure E2E tests create isolated users, orgs, groups, credentials, and domain data, then clean them up.
+- Open a PR only after the branch is locally green.
+
 ## Why this works
 
-- **End-to-end first**: you get something working before you optimize.
+- **End-to-end first**: browser E2E validates the product outcome users actually experience.
 - **Integration-aware**: you surface contracts and “must-not-break” paths early.
 - **Traceable**: requirements → stories → validation, so quality doesn’t depend on memory.
-- **Iterative hardening**: follow-ups close security gaps, edge cases, and rough UX.
+- **Small green batches**: each story is validated and committed before the next one starts, so PRs do not sit open for days.
+- **Parallel-safe E2E**: tests create and clean up their own namespaced data while reusing one shared stack for speed.
 
 ## Installing a skill
 
@@ -86,7 +98,7 @@ Copy the skills and subagents into your project:
 
 ```bash
 mkdir -p .cursor/skills .cursor/agents
-cp -R /path/to/this-repo/bug-fix /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video .cursor/skills/
+cp -R /path/to/this-repo/swe-bug-fix /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video .cursor/skills/
 cp -R /path/to/this-repo/.cursor/skills/swe-orchestrator .cursor/skills/
 cp -R /path/to/this-repo/.cursor/agents/*.md .cursor/agents/
 cp -R /path/to/this-repo/.llm .
@@ -101,7 +113,7 @@ Restart Cursor, then invoke the workflow from Agent chat:
 
 ```bash
 mkdir -p ~/.cursor/skills ~/.cursor/agents
-cp -R /path/to/this-repo/bug-fix /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video ~/.cursor/skills/
+cp -R /path/to/this-repo/swe-bug-fix /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video ~/.cursor/skills/
 cp -R /path/to/this-repo/.cursor/skills/swe-orchestrator ~/.cursor/skills/
 cp -R /path/to/this-repo/.cursor/agents/*.md ~/.cursor/agents/
 cp -R /path/to/this-repo/.llm ~/
@@ -125,7 +137,7 @@ Claude Code supports both project skills and project subagents. This repo includ
 
 ```bash
 mkdir -p .claude/skills .claude/commands .claude/agents
-cp -R /path/to/this-repo/bug-fix /path/to/this-repo/create-plan /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video .claude/skills/
+cp -R /path/to/this-repo/swe-bug-fix /path/to/this-repo/create-plan /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video .claude/skills/
 cp -R /path/to/this-repo/.system/skill-creator /path/to/this-repo/.system/skill-installer .claude/skills/
 cp -R /path/to/this-repo/.claude/commands .claude/
 cp -R /path/to/this-repo/.claude/agents .claude/
@@ -138,7 +150,7 @@ Restart Claude Code or reload agents after copying the files.
 
 ```bash
 mkdir -p ~/.claude/skills ~/.claude/commands ~/.claude/agents
-cp -R /path/to/this-repo/bug-fix /path/to/this-repo/create-plan /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video ~/.claude/skills/
+cp -R /path/to/this-repo/swe-bug-fix /path/to/this-repo/create-plan /path/to/this-repo/swe-init /path/to/this-repo/swe-prd /path/to/this-repo/swe-spec /path/to/this-repo/swe-tdd /path/to/this-repo/swe-exec /path/to/this-repo/swe-gtm-video ~/.claude/skills/
 cp -R /path/to/this-repo/.system/skill-creator /path/to/this-repo/.system/skill-installer ~/.claude/skills/
 cp -R /path/to/this-repo/.claude/commands ~/.claude/
 cp -R /path/to/this-repo/.claude/agents ~/.claude/

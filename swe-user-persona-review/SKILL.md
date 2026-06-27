@@ -13,7 +13,7 @@ This skill is for:
 
 - Artifact review: PRD, proposal, tech spec, epic, story, bug ticket
 - Design review: screenshots, mockups, exported frames, recordings
-- Live review: running feature, local dev server, staging/prod URL, bug-fix validation
+- Live review: running feature, local dev server, staging/prod URL, swe-bug-fix validation
 
 ## Inputs
 
@@ -50,7 +50,7 @@ This skill is for:
 - Tie every finding back to the persona's goals, constraints, and workflow.
 - For live reviews, validate in the browser before concluding.
 - For design reviews, use screenshots or recordings as the source of truth. Do not inspect code unless the user explicitly asks for code review.
-- For bug-fix validation, treat the fix as unverified until you reproduce and retest it against the live app.
+- For swe-bug-fix validation, treat the fix as unverified until you reproduce and retest it against the live app.
 
 ### 4) Findings-first output
 
@@ -160,7 +160,7 @@ Use secondary checks only when needed.
 - State clearly what was actually emulated versus what is inferred.
 - Do not claim native-device validation if you only used browser emulation.
 
-### 7) Bug-fix validation mode
+### 7) swe-bug-fix validation mode
 
 - Recreate the original bug path if it is known.
 - Validate:

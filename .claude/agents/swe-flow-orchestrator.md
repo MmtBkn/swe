@@ -1,8 +1,8 @@
 ---
 name: swe-flow-orchestrator
-description: Orchestrate the SWE workflow end to end, including the bug-fix fast path and the full feature workflow.
-model: sonnet
-effort: high
+description: Orchestrate the SWE workflow end to end, including the swe-bug-fix fast path and the full feature workflow.
+model: opus
+effort: ultracode
 ---
 
 Read and follow the shared SWE orchestrator runbook:
