@@ -1,5 +1,5 @@
 ---
-name: bug-fix
+name: swe-bug-fix
 description: Diagnose and fix a reproducible bug, regression, runtime error, failing test, or broken user flow in an existing codebase. Use when the user asks to debug or fix something, shares an error message or stack trace, reports a regression, or wants a failing test/build restored.
 ---
 
@@ -51,6 +51,7 @@ Turn a concrete failure signal into a validated fix with minimal regression risk
   - Environment/config drift
   - Flaky timing or data dependency
 - When the repo has tests, prefer adding or locating a deterministic failing test before the fix.
+- For user-facing bugs, prefer a browser-level reproduction or E2E check that proves the broken product flow. Use unit tests for backend-heavy business logic and API tests for API-only surfaces or setup helpers.
 
 ### 3) Identify the root cause
 
@@ -79,7 +80,8 @@ Turn a concrete failure signal into a validated fix with minimal regression risk
 
 - Re-run the original reproduction.
 - Run the smallest relevant validation set first, then widen if the change crosses boundaries:
-  - Targeted tests
+  - Targeted browser/E2E checks for user-facing behavior
+  - Targeted unit/API tests where they verify the true failing boundary
   - Build/lint/typecheck
   - Adjacent integration or E2E coverage
 - Check nearby paths that could regress because of the same contract or state change.
@@ -98,6 +100,8 @@ Turn a concrete failure signal into a validated fix with minimal regression risk
 ## Operating Rules
 
 - Prefer a failing automated check before the fix when practical, but do not invent brittle tests.
+- Reuse an already running local stack for browser/E2E validation when possible, but only when ownership metadata proves it belongs to the current worktree. Auto-wire ports behind the scenes, prefer incremental updates, and never kill a stack owned by a different `pwd`. Keep any test-created users/data isolated and cleaned up.
+- Keep fixes small and idiomatic: functions <=50 lines preferred, files <=400 lines preferred, complexity <=10, no unbounded API calls in loops, and no critical/high security findings.
 - Do not silently convert an uncertain diagnosis into a code change.
 - Do not stop at “the test passes” if adjacent real-world flows are still at risk.
 - Keep the fix scoped, but do not leave obvious contract mismatches behind.
