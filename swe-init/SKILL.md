@@ -111,7 +111,8 @@ Create a clear action plan (5-10 steps per knowledge source):
 Repeat for each accessible internal source (Confluence, Notion, SharePoint, etc.), and for the current repo. Write a deatailed context to .swe/context/architecture.md to set software engineering agent success.
 
 4. If Internal Knowledge is Not Accessible 😅
-   •	Copy the default architecture template from assets/architecture-default.md to project's .swe/context/architecture.md
+   •	Copy the default architecture template from assets/architecture.default.md to project's .swe/context/architecture.md
+   •	Update or create AGENTS.md, CLAUDE.md, and any related agent instruction files by using assets/agents.default.md as the baseline, so coding agents receive consistent repo guidance and produce higher-quality results.
 
 ## Writing rules (context-writer mode)
 
