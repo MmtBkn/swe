@@ -116,6 +116,16 @@ This test spec focuses on **end-to-end user flows and outcomes**:
 - Validate **user-visible outcomes** (UI state, navigation, notifications, permission outcomes).
 - Use preconditions/fixtures/APIs only to set up state; keep assertions user-centric.
 - Prefer stable locators (e.g., roles/labels/test-ids) over brittle CSS selectors.
+- Unit tests are supporting checks for backend-heavy business logic, not substitutes for user-facing E2E acceptance.
+- API tests are acceptable for API-only user surfaces or setup helpers, but browser E2E remains the default for product behavior.
+
+### 8.1.1 Suite Tiers
+
+| Tier | Purpose | When to Run | Expected Duration Target | Required Coverage |
+| ---- | ------- | ----------- | ------------------------ | ----------------- |
+| Smoke | Fast confidence in environment + critical path | Every story before `-done`; before PR | [target] | Health/login + one critical path |
+| Impacted | Validate changed surfaces and mapped requirements | Every story before `-done`; before PR | [target] | Tests linked to changed routes/APIs/personas |
+| Full Regression | Broad confidence before merge/release | Before PR, release, or broad/sensitive changes | [target] | P0/P1 cross-feature flows |
 
 ### 8.2 Tooling (align to repo)
 
@@ -123,21 +133,59 @@ This test spec focuses on **end-to-end user flows and outcomes**:
 - **Auth helpers:** [storage state, test users, SSO bypass, etc]
 - **Test data helpers:** [seed scripts, API helpers, DB reset]
 
-### 8.3 Environments
+### 8.3 Shared Stack Execution
 
-- **Local:** [how to run]
-- **CI:** [pipelines]
+- **Build once:** [command]
+- **Start stack once per worktree:** [command]
+- **Base URL:** [local URL or tunnel URL env var]
+- **Port wiring:** Agent auto-discovers free ports or uses repo-supported env vars behind the scenes; no user port selection and no hardcoded ports.
+- **Readiness check:** [health endpoint/UI signal]
+- **Reuse rule:** Reuse the same owned running stack for the current worktree across smoke, impacted, and full-regression suites. Do not restart per test file/worker/retry/story unless isolation requires it.
+- **Incremental update strategy:** [hot reload, targeted service restart, migration apply, Hasura metadata apply, schema refresh, cache clear]
+- **Full restart criteria:** [only when incremental repair fails or the change requires it]
+- **Tunnel option:** [Cloudflare Tunnel/ngrok command and URL variable, if parallel remote runners need access]
+
+#### 8.3.1 Stack Ownership Metadata
+
+| Field | Value / Source | Required Use |
+| ----- | -------------- | ------------ |
+| Worktree root | absolute `pwd` | Prevent cross-worktree interaction |
+| Stack start timestamp | generated when stack starts | Detect stale/ghost stacks |
+| Base URL | resolved at startup | Passed to E2E as `BASE_URL` |
+| Ports | dynamically assigned or repo env vars | Avoid hardcoded collisions |
+| Process/container IDs or labels | startup output/runtime labels | Safe cleanup/restart targeting |
+| Start command | repo-native command | Reproduce and debug |
+
+Pass to E2E runs:
+- `E2E_WORKTREE_ROOT`
+- `E2E_STACK_STARTED_AT`
+- `E2E_RUN_ID`
+- `BASE_URL`
+
+Ownership rules:
+- If recorded worktree root differs from current `pwd`, do not interact with or kill that stack.
+- If worktree root matches and timestamp matches, reuse that stack.
+- If worktree root matches but a newer healthy stack timestamp exists, treat older runs as ghosts and clean up only resources proven to belong to the same worktree and older timestamp.
+
+### 8.4 Environments
+
+- **Local:** [how to run shared stack]
+- **CI:** [pipeline and worker parallelism]
 - **Staging:** [required flags/seed data]
 
-### 8.4 Test Data & Seeding
+### 8.5 Test Data, Isolation & Cleanup
 
-- Required fixtures:
-- Required accounts/roles:
-- Data reset strategy:
+- **Namespace format:** `[worktree-hash]-[branch]-[commit]-[worker]-[test]-[random or timestamp]`
+- **Required fixtures:** [created per run/test]
+- **Required accounts/roles:** [created per worker/test, including super-admin if needed]
+- **Required orgs/groups/resources:** [created per worker/test]
+- **Isolation rules:** no shared mutable users, orgs, groups, browser storage state, or seeded records across parallel workers
+- **Cleanup strategy:** delete/archive test-owned resources in `afterEach`/`afterAll`; tag resources for TTL/fallback cleanup after crashed runs
+- **Data reset strategy:** [only if needed beyond per-test cleanup]
 
 ---
 
-### 8.5 UX & Recovery Expectations (Global)
+### 8.6 UX & Recovery Expectations (Global)
 
 Use this to drive UX-first test cases. Prefer “no dead ends”.
 
@@ -174,9 +222,9 @@ For each feature area, include happy paths, negative paths, permissions, and exp
 
 #### 9.A.1 Test Cases
 
-| ID | Scenario | Persona(s) | Priority (P0/P1/P2) | Preconditions / Data | Steps (User Actions) | Expected User Outcome |
-| -- | -------- | ---------- | ------------------- | -------------------- | ------------------- | --------------------- |
-| TS-A-001 | | | P0 | | | |
+| ID | Tier | Scenario | Persona(s) | Priority (P0/P1/P2) | Preconditions / Isolated Data | Cleanup | Steps (User Actions) | Expected User Outcome |
+| -- | ---- | -------- | ---------- | ------------------- | ----------------------------- | ------- | -------------------- | --------------------- |
+| TS-A-001 | Smoke/Impacted/Regression | | | P0 | | | | |
 
 #### 9.A.2 Edge Cases (Explicit)
 
@@ -267,6 +315,8 @@ Capture edge cases that cut across multiple feature areas.
 ## 12. Release Readiness & Exit Criteria
 
 - **P0 pass criteria:** [what must pass]
+- **Story done gate:** [build/lint/typecheck + smoke/impacted E2E commands]
+- **PR gate:** [build/lint/typecheck + impacted E2E + full regression criteria]
 - **Known risks accepted:** [list]
 - **Monitoring plan:** [dashboards/alerts]
 - **Rollback triggers:** [what conditions cause rollback]

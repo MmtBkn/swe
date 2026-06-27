@@ -1,6 +1,6 @@
 ---
 name: swe-tdd
-description: Break down a PRD/proposal into a comprehensive, E2E-first Test Specification Document (test plan) with persona coverage, a persona × feature matrix, feature-area breakdown, explicit UX edge cases (happy/error/empty/crash/recovery), and a PRD → user stories → E2E tests traceability map. Designed to run early (often before tech specs/epics/stories exist) in parallel with `swe-spec` to catch ambiguities and missing requirements by iterating against the PRD until coverage is complete. Use when a user asks to “write a test spec”, “create a QA test plan”, “derive tests from this PRD”, “create acceptance/validation test cases”, or wants Playwright/Selenium-style end-to-end user-flow validation.
+description: Break down a PRD/proposal into a comprehensive, E2E-first Test Specification Document (test plan) with persona coverage, a persona × feature matrix, feature-area breakdown, explicit UX edge cases (happy/error/empty/crash/recovery), and a PRD → user stories → E2E tests traceability map. Designed to run early as an independent pass for `swe-spec` or directly when the user asks to “write a test spec”, “create a QA test plan”, “derive tests from this PRD”, “create acceptance/validation test cases”, or wants Playwright/Selenium-style end-to-end user-flow validation.
 ---
 
 # SWE TDD (PRD → Test Specification Document)
@@ -14,7 +14,8 @@ Turn a PRD into a high-quality **Test Specification Document** that can drive im
 - Derived **user stories** (PRD → stories) for later verification
 - Feature-area test breakdown (epic-aligned when available)
 - Explicit UX-first edge cases (happy paths, error paths, empty/null states + CTAs, crash/recovery)
-- Users, and data required to test, craeted on the fly, no relyance on existing data, so we can have high parallelization with no data conflicts 
+- Users and data required to test, created on the fly with isolated namespaces, no reliance on existing data, and cleanup after each run
+- A per-worktree shared-stack, parallel-safe E2E execution strategy that avoids expensive environment spin-up per test worker
 - Requirements traceability (PRD → stories → **E2E tests**), with assumptions clearly labeled
 - A PRD-coverage iteration loop to surface ambiguities early (without writing the spec)
 
@@ -70,6 +71,34 @@ If the repo already stores test specs elsewhere, keep the *content* and structur
 - This test spec is for **end-to-end user flows and outcomes**, not business-logic unit tests.
 - Every test case should be automatable in an E2E framework (prefer Playwright; otherwise Selenium/Cypress per repo).
 - If verifying an outcome requires hooks (seed data, APIs, feature flags), capture them as **preconditions**, but keep the assertions user-facing.
+- Unit tests are acceptable only for backend-heavy business logic that cannot be validated efficiently through the browser. API tests are acceptable for API-only products or setup helpers, but they do not replace E2E acceptance for user-facing product behavior.
+- Prefer fewer, high-signal E2E tests over broad low-value permutations. Use risk and user impact to decide P0/P1/P2 coverage.
+
+### 4.1) Scalable E2E execution model
+
+- Specify how to build once, start the application stack once per worktree, and reuse the same base URL across smoke, impacted, and full-regression E2E runs.
+- Do not require a fresh environment per test file, worker, retry, story, or commit. Use one owned shared stack per worktree unless the repo architecture makes shared-stack isolation impossible.
+- Do not hardcode ports or ask the user to choose ports. Auto-wire ports behind the scenes by discovering free ports or using repo-supported env vars, then pass the resolved base URL to tests.
+- Define stack ownership metadata:
+  - absolute worktree root from `pwd`
+  - stack start timestamp
+  - base URL and dynamically assigned ports
+  - process/container IDs or labels
+  - command used to start the stack
+- Pass ownership metadata to E2E runs, for example `E2E_WORKTREE_ROOT`, `E2E_STACK_STARTED_AT`, `E2E_RUN_ID`, and `BASE_URL`.
+- Tests and cleanup scripts must not interact with a stack whose recorded worktree root differs from their current `pwd`.
+- If the worktree root matches but the stack timestamp differs, treat the older timestamp as stale. Reuse the newest healthy stack for that worktree; kill only processes/containers proven to belong to the same worktree and an older ghost timestamp.
+- Prefer incremental runtime updates over full restarts: hot reload, targeted service restart, migration apply, Hasura metadata apply, schema refresh, or cache clear. Kill and recreate the stack only when incremental repair fails or the change requires it.
+- If multiple local or remote runners need access to the same stack, document a tunnel option such as Cloudflare Tunnel or ngrok, plus the expected base URL variable.
+- Define suite tiers:
+  - Smoke: fastest health/login/critical-path coverage.
+  - Impacted: tests mapped to the current story, changed routes, changed API contracts, and risk areas.
+  - Full regression: run before PR/release or for broad/sensitive changes, not after every small edit.
+- Define parallel execution requirements:
+  - worker-scoped browser contexts and auth/storage state
+  - no shared mutable accounts or orgs
+  - unique test namespace per worktree/branch/commit/worker/test
+  - cleanup and TTL fallback for crashed runs
 
 ### 5) Derive personas and access model
 
@@ -117,7 +146,8 @@ If the repo already stores test specs elsewhere, keep the *content* and structur
   - **Negative** scenarios (validation, errors, permissions)
   - **Edge cases** (explicit, enumerated; include empty states, null/undefined values, and crash/recovery)
   - **Observability checks** (logs/metrics/audits where relevant)
-  - **Data Prep** prepare ephemeral user/data for non conflicting highly parellelized testing 
+  - **Data Prep** prepare ephemeral users/data for non-conflicting, highly parallelized testing
+  - **Cleanup** remove or expire test-owned resources so clutter does not break future runs
   - **Automation guidance** (Playwright preferred; otherwise Selenium/Cypress per repo)
 - Prefer a consistent test case format with stable IDs (e.g., `TS-AREA1-001`) and **explicit user steps + expected user-visible outcomes**.
 
@@ -156,3 +186,5 @@ If the repo already stores test specs elsewhere, keep the *content* and structur
   - No hidden uncertainty: assumptions and open questions are explicit
   - Do not rely on existing data
   - Instructions to clean up after every test
+  - Shared-stack execution is defined so E2E does not repeatedly rebuild or restart the environment
+  - Parallel worker/resource isolation is explicit enough that the same test can run concurrently on different worktrees or branches without collision
