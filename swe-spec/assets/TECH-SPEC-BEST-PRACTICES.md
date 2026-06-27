@@ -169,8 +169,14 @@ A specification is useless if it cannot be executed. This section bridges the ga
 
 Quality assurance strategies must be defined upstream to ensure the "Definition of Done" is clear.
 
-* **Unit vs. Integration:** What logic is tested in isolation versus in concert?
-* **Test Data:** How do we generate seed data for testing?
+* **E2E-first acceptance:** What critical user-visible browser flows prove the product outcome works?
+* **Unit/API as support:** What backend-heavy business logic or API-only surfaces require lower-level tests that E2E cannot cover efficiently?
+* **Suite tiers:** Which smoke, impacted, and full-regression suites run at story, PR, and release gates?
+* **Shared stack:** How do we build once, start one owned stack per worktree, and reuse the same base URL instead of repeatedly spinning up environments?
+* **Agent-wired ports and ownership:** How do we avoid hardcoded port collisions without asking users for ports, record absolute `pwd` plus stack start timestamp, and prevent cross-worktree cleanup?
+* **Incremental runtime updates:** How do we apply changes with hot reload, targeted service restart, migration apply, Hasura metadata apply, schema refresh, or cache clear before killing/recreating the stack?
+* **Parallel-safe test data:** How do we generate isolated users, orgs, groups, credentials, feature flags, and domain data per worktree/branch/commit/worker/test?
+* **Cleanup:** How do tests remove or expire their own resources so old clutter cannot fail future runs?
 * **Load Testing:** Plans for simulating high traffic to validate scalability claims.13
 * **Edge Cases:** Specific scenarios that need rigorous testing (e.g., "Leap year calculations," "Negative currency values").29
 
@@ -361,5 +367,15 @@ Watch for these architectural anti-patterns:
 - **Magic**: Unclear, undocumented behavior
 - **Tight Coupling**: Components too dependent
 - **God Object**: One class/component does everything
+
+## Code Red Flags
+
+- Large functions: <=50 lines preferred; >100 requires refactor discussion
+- High complexity: cyclomatic complexity <=10; >15 requires justification
+- Large files: <=400 lines preferred; >800 requires ownership/refactor plan
+- Deep nesting >4 levels, duplicated code, hardcoded values, magic behavior
+- Missing error handling/retry, null/empty state handling, or recovery CTA
+- Missing `data-testid` and `data-pendo` tags on testable/analytics-relevant UI surfaces
+- Performance bottlenecks, unbounded API calls inside loops, critical/high security findings
 
 **Remember**: Good architecture enables rapid development, easy maintenance, and confident scaling. The best architecture is simple, clear, and follows established patterns.

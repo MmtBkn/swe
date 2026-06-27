@@ -10,7 +10,7 @@
 * **Status:** [Draft / In Review / Approved / Implementing / Implemented / Deprecated]
 * **Reviewers:** [Names/teams required for approval]
 * **Last Updated:** [YYYY-MM-DD]
-* **Related Links:** [Jira tickets, PRD, ADRs, docs]
+* **Related Links:** [Jira tickets, PRD, independent TST, ADRs, docs]
 
 ### Version History
 
@@ -256,10 +256,22 @@ Briefly summarize in 3-4 sentences:
 
 ### Test Strategy
 
-* **Unit Tests:** [Coverage details]
-* **Integration Tests:** [Systems/components involved]
-* **End-to-End Tests:** [Critical user scenarios]
+* **End-to-End Tests (primary for user-facing behavior):** [critical user scenarios, personas, browser coverage]
+* **API Tests (for API-only surfaces or setup helpers):** [contracts involved]
+* **Unit Tests (supporting backend-heavy business logic):** [coverage details]
+* **Integration Tests:** [systems/components involved]
 * **Load Testing:** [Scale & expectations]
+
+### E2E Execution Model
+
+* **Suite tiers:** smoke, impacted, full regression
+* **Shared stack:** [build once, start once, reuse base URL per worktree]
+* **Port wiring:** [agent auto-discovers free ports or uses repo-supported env vars; no user port selection and no hardcoded ports]
+* **Runtime ownership:** [absolute pwd, stack start timestamp, base URL, ports, process/container IDs]
+* **Incremental update strategy:** [hot reload, targeted service restart, migration apply, Hasura metadata apply, schema refresh, cache clear]
+* **Parallel isolation:** [unique namespace per worktree/branch/commit/worker/test]
+* **Test-owned resources:** [users, orgs, groups, credentials, feature flags, domain data]
+* **Cleanup:** [afterEach/afterAll and TTL fallback]
 
 ### Edge Cases and Failure Scenarios
 
@@ -268,6 +280,10 @@ Briefly summarize in 3-4 sentences:
 ### Definition of Done (DoD)
 
 * [ ] All tests passing
+* [ ] Story-level build/lint/typecheck completed
+* [ ] Story-level smoke or impacted E2E completed against a running stack
+* [ ] Test data creates its own resources and cleans them up
+* [ ] Code-quality budgets met or justified: functions <=50 lines preferred, files <=400 lines preferred, complexity <=10, no unbounded API loops
 * [ ] Observability set up
 * [ ] Runbooks written
 * [ ] Rollback verified
